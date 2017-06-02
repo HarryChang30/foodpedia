@@ -1,0 +1,155 @@
+<div class="jumbotron" style="background-color:#E3F2FD;">
+   <div class="container" style="margin-top:50px; font-family:'Sans-serif' , Verdana;">
+        <h2 style="text-transform:uppercase; font-weight:bold;">Foodpedia - All about foods</h2>
+        <p>Foodpedia is an online directory of food description.It was created as a implementation on how to integrate Laravel with AngularJS and Bootstrap.Laravel is used for the backend that supplies REST API and AngularJS is used as the client that consumes the REST API, Bootstrap is used to make things pretty :)</p>
+   </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="container">
+                <div class="row">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success" ng-click="toggle('add' , 0)">Add a New Food <i class="glyphicon glyphicon-plus"></i></button>
+                    </div>
+                    <div class="col-md-12">
+                        <h2>Food</h2>
+                        <p>Below are all the foods at Foodpedia.Click a food to view its description or click on the add a food to our food encyclopedia</p>
+                        <form action="#" method="get">
+                            <!-- use angular ajax call to search by filtering -->
+                            <div class="input-group">
+                                <input class="form-control" id="search" name="food_search" placeholder="Search food..." ng-model="keywords">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary" disabled="disabled"><i class="glyphicon glyphicon-search"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" style="margin-top:10px;">
+            <table class="table table-list-search table-striped">
+                <thead>
+                    <tr>
+                        <th><center>Food ID</center></th>
+                        <th><center>Food Name</center></th>
+                        <th><center>Author</center></th>
+                        <th><center>Added On</center></th>
+                        <th><center>Actions</center></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="food in foods | filter:keywords | pagination: currentPage * itemsPerPage | limitTo: itemsPerPage">
+                        <td><center>{{ food.id }}</center></td>
+                        <td><center><a href="#/food/{{ food.id }}" style="text-decoration:none;">{{ food.name }}</a></center></td>
+                        <td><center>{{ food.author }}</center></td>
+                        <td><center>{{ food.created_at }}</center></td>
+                        <td>
+                           <center><a class="btn btn-info btn-detail" ng-click="loadFoodPage(food.id)">View Food Description</a></center>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <td colspan="6">
+                        <div class="pagination pull-right">
+                            <ul class="pagination">
+                                <li ng-class="DisablePrevPage()">
+                                    <a href ng-click="prevPage()">Prev</a>
+                                </li>
+                                <li ng-repeat="n in range()" ng-class="{active: n == currentPage}">
+                                    <a href ng-click="setPage(n)">{{ n+1 }}</a>
+                                </li>
+                                <li ng-class="DisableNextPage()">
+                                    <a href ng-click="nextPage()">Next</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- modal popup add form -->
+        <div class="modal fade" id="foodModal" tabindex="-1" role="dialog" aria-labelledby="addFoodModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">x</span>
+                        </button>
+                        <h4 class="modal-title" id="addFoodModal">{{ form_title }}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name="frmFoods" class="form-horizontal" novalidate="">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Food Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="foodName" name="foodName" placeholder="Food Name" value="{{ name }}" ng-model="food.name" required="true">
+                                    <span ng-show="frmFoods.foodName.$invalid && frmFoods.foodName.$touched" style="margin-top:5px; color:red;">Food name field is required</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Author</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="foodAuthor" name="foodAuthor" placeholder="Author" value="{{ author }}" ng-model="food.author" required="true">
+                                    <span ng-show="frmFoods.foodAuthor.$invalid && frmFoods.foodAuthor.$touched" style="margin-top:5px; color:red;">Author field is required</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Food Overview</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="foodOverview" name="foodOverview" placeholder="Overview" value="{{ overview }}" ng-model="food.overview" required="true">
+                                    <span ng-show="frmFoods.foodOverview.$invalid && frmFoods.foodOverview.$touched" style="margin-top:5px; color:red;">Overview field is required</span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btn-save" ng-click="save()" ng-disabled="frmFoods.$invalid">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                      <div class="alert alert-success" style="margin-top:20px;">
+                          <strong>Success!</strong>
+                          <div style="margin-top:15px; margin-bottom:15px;">
+                              {{ success_message }}
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Error Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="alert alert-danger" style="margin-top:20px;">
+                            <strong>Failed!</strong>
+                            <div style="margin-top:15px; margin-bottom:15px;">
+                               {{ error_message }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

@@ -1,0 +1,36 @@
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+.food-description-block {
+    background-color: #FAFAFA;
+    border: 1px solid #EFEFEF;
+    padding: 15px;
+    border-radius: 3px;
+    margin-bottom: 15px;
+}
+
+.food-description-block-rate {
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.food-description-block-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.food-description-block-description {
+    font-size: 15px;
+}
+
+.food-description-block-meta{
+	font-size: 12px;
+}
+
+.help-inline{
+	color: #a94442;
+	font-weight: 700;
+}

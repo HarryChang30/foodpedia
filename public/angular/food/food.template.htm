@@ -1,0 +1,138 @@
+<div class="jumbotron" style="background-color:#E3F2FD;">
+   <div class="container" style="margin-top:50px; font-family:'Sans-serif' , Verdana;">
+        <h1>{{ food_name }}</h1>
+        <small>added by {{ food_author }} on {{ food_create_date }}</small>
+        <p style="margin-top:20px;">{{ food_overview }}</p>
+        <p style="margin-top:10px;">
+          <a class="btn btn-success" ng-click="showModal('add' , 0)" role="button">Add a Description</a>
+          <a href ng-click="loadFoodsPage()" class="btn btn-primary" role="button">Back to the Food Directory</a>
+        </p>
+   </div>
+</div>
+
+<!-- container for all descriptions for the food -->
+<div class="container" style="margin-bottom:30px;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row" ng-repeat="description in descriptions | filter:searchText">
+                            <div class="col-sm-12 food-description-block">
+                                <div class="food-description-block-title">{{ description.title }}</div>
+                                <p class="food-description-block-meta">Added by {{ description.author }} on {{ description.description }}</p>
+                                <p class="food-description-block-description">{{ description.description }}</p>
+                                <hr />
+                                <button class="btn btn-sm btn-primary" ng-click="showModal('edit' , description.id )" id="loadMoreButton">Edit Description</button>
+                                <button class="btn btn-sm btn-danger" ng-click="confirmDelete(description.id)" id="loadMoreButton">Delete Description</button>
+                            </div>
+                            <hr>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <button class="btn btn-success" ng-click="showModal('add' , 0)" id="loadMoreButton">Add a Description</button>
+                            <button class="btn btn-primary" ng-disabled="currentPage >= lastPage" ng-click="loadMoreDescriptions()" id="loadMoreButton">{{ loadMoreText }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="alert alert-danger" style="margin-top:20px;">
+                    <strong>Failed!</strong>
+                    <div style="margin-top:15px; margin-bottom:15px;">
+                       {{ error_message }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <div class="alert alert-success" style="margin-top:20px;">
+                  <strong>Success!</strong>
+                  <div style="margin-top:15px; margin-bottom:15px;">
+                      {{ success_message }}
+                  </div>
+              </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- Show Confirm Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+                <div class="modal-header">
+                      <div class="alert alert-warning" style="margin-top:20px;">
+                          <strong>Delete</strong>
+                          <div style="margin-top:15px; margin-bottom:15px;">
+                              Are you sure to delete this record ?
+                          </div>
+                      </div>
+                      <div style="margin-top:10px;">
+                          <button type="button" class="btn btn-primary" id="btn-delete-yes" style="width:100px;" ng-click="saveDelete()">Yes</button>
+                          <button type="button" class="btn btn-danger" id="btn-delete-no" style="width:100px;" ng-click="closeDelete()">No</button>
+                      </div>
+                </div>
+
+          </div>
+      </div>
+</div>
+
+<!-- show popup modal form -->
+<div class="modal fade" id="descriptionModal" tabindex="-1" role="dialog" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">x</span>
+              </button>
+              <h4 class="modal-title" id="descriptionModalLabel">{{ modal_title }}</h4>
+            </div>
+            <div class="modal-body">
+                <form name="frmDescription" class="form-horizontal" novalidate="">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Description Title</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="descriptionTitle" name="descriptionTitle" placeholder="Description Title" value={{ description.title }} ng-model="description.title" required="true">
+                            <span ng-show="frmDescription.descriptionTitle.$invalid && frmDescription.descriptionTitle.$touched" style="margin-top:5px; color:red;">Description Title field is required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea rows="3" class="form-control" id="description" name="description" placeholder="Description" value={{ description.description }} ng-model="description.description" required="true"></textarea>
+                            <span ng-show="frmDescription.description.$invalid && frmDescription.description.$touched" style="margin-top:5px; color:red;">Description field is required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Author</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="author" name="author" placeholder="Author" value={{ description.author }} ng-model="description.author" required="true">
+                            <span ng-show="frmDescription.author.$invalid && frmDescription.author.$touched" style="margin-top:5px; color:red;">Author field is required</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-save" ng-click="addDescription(description.id)" ng-disabled="frmDescription.$invalid">{{ modal_button }}</button>
+            </div>
+        </div>
+    </div>
+</div>
